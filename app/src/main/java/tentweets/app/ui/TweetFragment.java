@@ -32,12 +32,9 @@ import tentweets.app.rest.RestApiClient;
 import tentweets.app.util.SessionManager;
 
 public class TweetFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String TAG = "TweetFragment";
     private static final String SCREEN_NAME = "screen_name";
 
-    // TODO: Rename and change types of parameters
     private String name;
     private List<UserDetails> timeline;
 
@@ -128,21 +125,13 @@ public class TweetFragment extends Fragment {
 
                     for(int i = 0; i < 10; i++){
                         JSONObject obj = arr.get(i);
-                        int fav_count = obj.getInt("favorite_count");
-                        Log.d(TAG,"Sorted Favorites: " +fav_count);
-                        //Log.d(TAG, obj.toString()+"\n");
-                        String created_at = obj.getString("created_at");
-                        String idStr = obj.getString("id_str");
-                        String text = obj.getString("text");
-                        int retweet = obj.getInt("retweet_count");
-                        UserDetails detail = new UserDetails(created_at, idStr, text, fav_count, retweet);
-//                        Log.d(TAG, detail.toString());
+                        UserDetails detail = new UserDetails(obj);
                         timeline.add(detail);
                     }
 
-                    for(UserDetails d : timeline){
-                        Log.d(TAG, d.toString());
-                    }
+//                    for(UserDetails d : timeline){
+//                        Log.d(TAG, d.toString());
+//                    }
                 }
                 catch(Exception e){
                     e.printStackTrace();
