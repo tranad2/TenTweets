@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +39,10 @@ public class TweetFragment extends Fragment {
 
     private String name;
     private List<UserDetails> timeline;
+    private SessionManager manager;
+    private RecyclerView tweetRecView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private TweetsAdapter tweetsAdapter;
 
     public TweetFragment() {
         // Required empty public constructor
@@ -64,19 +70,31 @@ public class TweetFragment extends Fragment {
         if (getArguments() != null) {
             name = getArguments().getString(SCREEN_NAME);
         }
-        getUserTimeline(name);
+        timeline = new ArrayList<>();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tweet, container, false);
+        View view = inflater.inflate(R.layout.fragment_tweet, container, false);
+        getUserTimeline(name);
+
+        tweetRecView = (RecyclerView) view.findViewById(R.id.recycler_tweet_view);
+
+        // specify an adapter (see also next example)
+        tweetsAdapter = new TweetsAdapter(timeline);
+        tweetRecView.setAdapter(tweetsAdapter);
+        tweetRecView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
+
+        // use a linear layout manager
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        tweetRecView.setLayoutManager(mLayoutManager);
+
+        return view;
     }
 
     public void getUserTimeline(String name){
-        timeline = new ArrayList<>();
-        SessionManager manager = new SessionManager(getActivity().getApplicationContext());
+        manager = new SessionManager(getActivity().getApplicationContext());
         RestApiClient client = new RestApiClient();
         RequestParams params = new RequestParams();
         params.put("screen_name", name);
@@ -100,19 +118,15 @@ public class TweetFragment extends Fragment {
                 try{
                     // Pull out events on the public timeline
                     ArrayList<JSONObject> arr = new ArrayList<>();
-                    Log.d(TAG, "Timeline Length: "+response.length());
+                    //Log.d(TAG, "Timeline Length: "+response.length());
                     for(int i = 0; i < response.length(); i++){
                         JSONObject tweet = response.getJSONObject(i);
                         arr.add(tweet);
-                        int fav_count = tweet.getInt("favorite_count");
-                        //Log.d(TAG,"Favorites: " +fav_count);
                     }
                     Collections.sort(arr, new Comparator<JSONObject>() {        // Sort in descending order of favorite_count
 
                         @Override
                         public int compare(JSONObject lhs, JSONObject rhs) {
-                            // TODO Auto-generated method stub
-
                             try {
                                 return ((rhs.getInt("favorite_count") - (lhs.getInt("favorite_count"))));
                             } catch (JSONException e) {
@@ -127,11 +141,10 @@ public class TweetFragment extends Fragment {
                         JSONObject obj = arr.get(i);
                         UserDetails detail = new UserDetails(obj);
                         timeline.add(detail);
+                        Log.d(TAG,"Details: "+ detail.toString());
                     }
-
-//                    for(UserDetails d : timeline){
-//                        Log.d(TAG, d.toString());
-//                    }
+                    tweetsAdapter.notifyDataSetChanged();
+                    Log.d(TAG,"Tweets Size: "+timeline.size());
                 }
                 catch(Exception e){
                     e.printStackTrace();
@@ -158,50 +171,44 @@ public class TweetFragment extends Fragment {
     private class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.MyViewHolder>{
         private List<UserDetails> tweets_list;
 
+        //Adapter constructor
         public TweetsAdapter(List<UserDetails> tweets_list) {
             this.tweets_list = tweets_list;
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView parking_id, parking_status;
+            TextView tweetCreatedView, tweetTextView, tweetFavoritesView;
+
             MyViewHolder(View view) {
                 super(view);
-                //parking_id = (TextView) view.findViewById(R.id.home_location_detail_space);
-                //parking_status = (TextView) view.findViewById(R.id.home_location_detail_status);
+                tweetFavoritesView = (TextView) view.findViewById(R.id.tweet_favorites);
+                tweetCreatedView = (TextView) view.findViewById(R.id.tweet_created);
+                tweetTextView = (TextView) view.findViewById(R.id.tweet_text);
             }
         }
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             // Inflate the custom layout
-            View location_view = LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.list_item_detail, parent, false);
+            View view = LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.list_item_detail, parent, false);
             // Return a new holder instance
-            return new MyViewHolder(location_view);
+            Log.d("MyViewHolder","Items: "+getItemCount());
+            return new MyViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
-            /**final UserDetails tweet = tweets_list.get(position);
-            holder.parking_id.setText("Slot ID: "+String.valueOf(location.getSpaceId()));
-            holder.parking_status.setText(location.getStatus().substring(0, 1).toUpperCase() + location.getStatus().substring(1));
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                int id = location.getId();
-                int parking_id = location.getSpaceId();
-                String status = location.getStatus();
-                @Override
-                public void onClick(View v) {
-                    if(status.equals("unoccupied")) {
-                        Toast.makeText(getActivity().getApplicationContext(), "" + id, Toast.LENGTH_LONG).show();
+            final UserDetails tweet = tweets_list.get(position);
+            Log.d(TAG,"Size: "+tweets_list.size());
 
-                        //Display dialog fragment
-                    }
-                }
-            });
-                */
+            holder.tweetFavoritesView.setText((position+1) +". Tweet: "+tweet.getFavoriteCount());
+            holder.tweetCreatedView.setText("Date: "+tweet.getCreatedAt());
+            holder.tweetTextView.setText("Message: \n"+tweet.getText());
         }
 
         @Override
         public int getItemCount() {
+            Log.d(TAG,"Adapter Size"+tweets_list.size());
             return tweets_list.size();
         }
     }

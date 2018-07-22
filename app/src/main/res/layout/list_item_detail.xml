@@ -5,8 +5,8 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/home_location_detail_space"
-        android:text="@string/tweet_name"
+        android:id="@+id/tweet_favorites"
+        android:text="@string/tweet_favorites"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
@@ -14,11 +14,23 @@
         android:textSize="20sp"
         android:textStyle="normal|bold"
         android:textColor="@color/primary_text"
-        android:layout_marginTop="15sp"/>
+        android:layout_marginTop="15sp"
+        android:layout_marginBottom="15sp"/>
 
     <TextView
-        android:id="@+id/home_location_detail_status"
-        android:text="@string/tweet_description"
+        android:id="@+id/tweet_created"
+        android:text="@string/tweet_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/primary_text"
+        android:layout_marginBottom="15sp"/>
+
+    <TextView
+        android:id="@+id/tweet_text"
+        android:text="@string/tweet_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp"

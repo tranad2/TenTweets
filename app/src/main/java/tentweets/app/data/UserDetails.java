@@ -69,6 +69,14 @@ public class UserDetails {
         this.favoriteCount = favouritesCount;
     }
 
+    public String getText(){
+        return text;
+    }
+
+    public void setText(String text){
+        this.text = text;
+    }
+
     public String getLang() {
         return lang;
     }

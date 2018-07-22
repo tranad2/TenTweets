@@ -82,7 +82,7 @@ public class SearchFragment extends Fragment {
                 Log.d(TAG, "Button pressed");
                 TweetFragment fragment = TweetFragment.newInstance(name);
                 //TODO: Add register to stack
-                getFragmentManager().beginTransaction().replace(R.id.tweets_container, fragment).addToBackStack(null).commit();
+                getFragmentManager().beginTransaction().replace(R.id.search_fragment, fragment).addToBackStack(null).commit();
             }
         });
         return view;
@@ -91,6 +91,5 @@ public class SearchFragment extends Fragment {
     public String getScreenName(){
         return mSearchView.getText().toString();
     }
-
 
 }
