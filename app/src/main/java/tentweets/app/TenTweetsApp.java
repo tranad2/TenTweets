@@ -19,8 +19,8 @@ public class TenTweetsApp extends AppCompatActivity {
 
     public final static String TAG = "Response";
 
-    private final static String CONSUMER_KEY = "3U0Fl5DHoHesGncx5Zs9HHTph";
-    private final static String CONSUMER_SECRET = "tyRGnA9d5jLdbKGoxzsw7V8cy6ftea06tsqe5dr9l00Ozorp56";
+    private final static String CONSUMER_KEY = BuildConfig.consumer_key;
+    private final static String CONSUMER_SECRET = BuildConfig.consumer_secret;
     private String TWEET_FRAGMENT = "tweet_fragment";
     private SessionManager manager;
     @Override
