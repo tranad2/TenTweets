@@ -18,9 +18,6 @@ import tentweets.app.util.SessionManager;
 public class TenTweetsApp extends AppCompatActivity {
 
     public final static String TAG = "Response";
-
-    private final static String CONSUMER_KEY = BuildConfig.consumer_key;
-    private final static String CONSUMER_SECRET = BuildConfig.consumer_secret;
     private String TWEET_FRAGMENT = "tweet_fragment";
     private SessionManager manager;
     @Override
@@ -43,7 +40,7 @@ public class TenTweetsApp extends AppCompatActivity {
         RestApiClient client = new RestApiClient();
         RequestParams requestParams = new RequestParams();
         requestParams.put("grant_type", "client_credentials");
-        client.addHeader("Authorization", "Basic " + Base64.encodeToString((CONSUMER_KEY + ":" + CONSUMER_SECRET).getBytes(), Base64.NO_WRAP));
+        client.addHeader("Authorization", "Basic " + Base64.encodeToString((getString(R.string.CONSUMER_KEY) + ":" + getString(R.string.CONSUMER_SECRET)).getBytes(), Base64.NO_WRAP));
         client.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
         client.post("oauth2/token", requestParams, new JsonHttpResponseHandler(){
             @Override

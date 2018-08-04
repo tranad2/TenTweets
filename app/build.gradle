@@ -1,8 +1,12 @@
 apply plugin: 'com.android.application'
 
-def apikeyPropertiesFile = rootProject.file("apikey.properties");
-def apikeyProperties = new Properties()
-apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+//Load API Key information in from property file
+Properties props = new Properties()
+try {
+    props.load(rootProject.file('apikey.properties').newDataInputStream())
+} catch (Exception ex) {
+    throw new GradleException("Missing twitter.properties, check the twitter.properties.sample file.")
+}
 
 android {
 
@@ -14,13 +18,23 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "consumer_key", apikeyProperties['consumer_key'])
-        buildConfigField("String", "consumer_secret", apikeyProperties['consumer_secret'])
     }
     buildTypes {
+        debug {
+            resValue "string", "CONSUMER_KEY", "\"${props.getProperty("twitterConsumerKey")}\""
+            resValue "string", "CONSUMER_SECRET", "\"${props.getProperty("twitterConsumerSecret")}\""
+            resValue "bool", "com.twitter.sdk.android.TRACE_ENABLED", "true"
+            resValue "bool", "com.twitter.sdk.android.COLLECT_IDENTIFIERS_ENABLED", "true"
+            buildConfigField "String", "MOPUB_AD_UNIT_ID", "\"${props.getProperty("mopubAdUnitId")}\""
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "com.twitter.sdk.android.CONSUMER_KEY", "\"${props.getProperty("twitterConsumerKey")}\""
+            resValue "string", "com.twitter.sdk.android.CONSUMER_SECRET", "\"${props.getProperty("twitterConsumerSecret")}\""
+            resValue "bool", "com.twitter.sdk.android.TRACE_ENABLED", "false"
+            resValue "bool", "com.twitter.sdk.android.COLLECT_IDENTIFIERS_ENABLED", "true"
+            buildConfigField "String", "MOPUB_AD_UNIT_ID", "\"${props.getProperty("mopubAdUnitId")}\""
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
         }
     }
 }
@@ -32,6 +46,10 @@ dependencies {
     implementation 'com.loopj.android:android-async-http:1.4.9'
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.twitter.sdk.android:twitter-core:3.1.1'
+    implementation 'com.twitter.sdk.android:tweet-ui:3.1.1'
+    implementation 'com.twitter.sdk.android:tweet-composer:3.1.1'
+    implementation 'com.twitter.sdk.android:twitter-mopub:3.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
