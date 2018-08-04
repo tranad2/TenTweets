@@ -41,7 +41,6 @@ public class TweetFragment extends Fragment {
     private List<UserDetails> timeline;
     private SessionManager manager;
     private RecyclerView tweetRecView;
-    private RecyclerView.LayoutManager mLayoutManager;
     private TweetsAdapter tweetsAdapter;
 
     public TweetFragment() {
@@ -52,10 +51,9 @@ public class TweetFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param screen_name Twitter User Name
+     * @param screen_name Twitter Username
      * @return A new instance of fragment TweetFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static TweetFragment newInstance(String screen_name) {
         TweetFragment fragment = new TweetFragment();
         Bundle args = new Bundle();
@@ -82,7 +80,7 @@ public class TweetFragment extends Fragment {
         tweetRecView = (RecyclerView) view.findViewById(R.id.recycler_tweet_view);
 
         // specify an adapter (see also next example)
-        tweetsAdapter = new TweetsAdapter(timeline);
+        tweetsAdapter = new TweetsAdapter(this.getContext(),timeline);
         tweetRecView.setAdapter(tweetsAdapter);
         tweetRecView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
@@ -104,9 +102,9 @@ public class TweetFragment extends Fragment {
         client.get("1.1/statuses/user_timeline.json", params, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.v("Success",response.toString());
+                Log.d("Success",response.toString());
                 try{
-                    Log.v("UserTimeLine", response.toString());
+                    Log.d("UserTimeLine", response.toString());
                 }
                 catch(Exception e){
                     e.printStackTrace();
@@ -130,7 +128,6 @@ public class TweetFragment extends Fragment {
                             try {
                                 return ((rhs.getInt("favorite_count") - (lhs.getInt("favorite_count"))));
                             } catch (JSONException e) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                                 return 0;
                             }
@@ -142,6 +139,7 @@ public class TweetFragment extends Fragment {
                         UserDetails detail = new UserDetails(obj);
                         timeline.add(detail);
                         Log.d(TAG,"Details: "+ detail.toString());
+                        Log.d(TAG,"JSONObject "+obj.toString());
                     }
                     tweetsAdapter.notifyDataSetChanged();
                     Log.d(TAG,"Tweets Size: "+timeline.size());
@@ -155,25 +153,35 @@ public class TweetFragment extends Fragment {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject responseError){
                 throwable.printStackTrace();
                 for(Header head: headers){
-                    Log.v("Header", head.toString());
+                    Log.d("Header", head.toString());
                 }
-                Log.v("TimelineFailure1","Status: "+statusCode+" Response: "+responseError.toString());
+                Log.d("TimelineFailure1","Status: "+statusCode+" Response: "+responseError.toString());
+                try{
+                    JSONObject error = responseError.getJSONObject("errors");
+                    String message = error.getString("message");
+                    Toast.makeText(getActivity(),message, Toast.LENGTH_LONG).show();
+                } catch(JSONException e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseError, Throwable throwable){
                 throwable.printStackTrace();
-                Log.v("TimelineFailure2","Status: "+statusCode+" Response: "+responseError.toString());
+                Log.d("TimelineFailure2","Status: "+statusCode+" Response: "+responseError.toString());
+                Toast.makeText(getActivity(),responseError, Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.MyViewHolder>{
         private List<UserDetails> tweets_list;
+        private Context context;
 
         //Adapter constructor
-        public TweetsAdapter(List<UserDetails> tweets_list) {
+        public TweetsAdapter(Context context, List<UserDetails> tweets_list) {
             this.tweets_list = tweets_list;
+            this.context = context;
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
@@ -190,7 +198,7 @@ public class TweetFragment extends Fragment {
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             // Inflate the custom layout
-            View view = LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.list_item_detail, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.list_item_detail, parent, false);
             // Return a new holder instance
             Log.d("MyViewHolder","Items: "+getItemCount());
             return new MyViewHolder(view);
@@ -201,7 +209,7 @@ public class TweetFragment extends Fragment {
             final UserDetails tweet = tweets_list.get(position);
             Log.d(TAG,"Size: "+tweets_list.size());
 
-            holder.tweetFavoritesView.setText((position+1) +". Tweet: "+tweet.getFavoriteCount());
+            holder.tweetFavoritesView.setText("Favorites: "+tweet.getFavoriteCount());
             holder.tweetCreatedView.setText("Date: "+tweet.getCreatedAt());
             holder.tweetTextView.setText("Message: \n"+tweet.getText());
         }

@@ -5,7 +5,7 @@ Properties props = new Properties()
 try {
     props.load(rootProject.file('apikey.properties').newDataInputStream())
 } catch (Exception ex) {
-    throw new GradleException("Missing twitter.properties, check the twitter.properties.sample file.")
+    throw new GradleException("Missing apikey.properties, check the 'apikey.properties.sample file.")
 }
 
 android {
@@ -50,6 +50,7 @@ dependencies {
     implementation 'com.twitter.sdk.android:tweet-ui:3.1.1'
     implementation 'com.twitter.sdk.android:tweet-composer:3.1.1'
     implementation 'com.twitter.sdk.android:twitter-mopub:3.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

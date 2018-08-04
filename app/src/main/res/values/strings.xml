@@ -1,10 +1,8 @@
 <resources>
     <string name="app_name">TenTweets</string>
+    <string name="app_description">Description</string>
     <string name="tweet_fragment_name">Your Twitter Name</string>
     <string name="tweet_fragment_go">Go!</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Strings related to Tweet List -->
     <string name="tweet_favorites">Favorites</string>

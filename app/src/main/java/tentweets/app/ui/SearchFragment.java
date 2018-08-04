@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -33,12 +35,9 @@ import tentweets.app.util.SessionManager;
 
 public class SearchFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String TAG = "SearchFragment";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
 
+    private TextView mDescView;
     private EditText mSearchView;
     private Button btnSearch;
     /**
@@ -48,23 +47,9 @@ public class SearchFragment extends Fragment {
     public SearchFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static SearchFragment newInstance(int columnCount) {
-        SearchFragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
@@ -72,6 +57,8 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
+        mDescView = view.findViewById(R.id.app_desc);
+        mDescView.setText("This tool will find 10 of your most popular recent Tweets. Perfect for finding the best of your recent contents.");
         mSearchView = view.findViewById(R.id.screen_name);
         btnSearch = view.findViewById(R.id.tweet_search_button);
         btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -80,8 +67,13 @@ public class SearchFragment extends Fragment {
                 String name = getScreenName();
                 Log.d(TAG, name);
                 Log.d(TAG, "Button pressed");
+                //Close keyboard on button press
+                InputMethodManager inputManager = (InputMethodManager)
+                        getActivity().getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
                 TweetFragment fragment = TweetFragment.newInstance(name);
-                //TODO: Add register to stack
                 getFragmentManager().beginTransaction().replace(R.id.search_fragment, fragment).addToBackStack(null).commit();
             }
         });
