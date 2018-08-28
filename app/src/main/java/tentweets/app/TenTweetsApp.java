@@ -27,13 +27,12 @@ public class TenTweetsApp extends AppCompatActivity {
 
         manager = new SessionManager(this.getApplicationContext());
 
-        if(manager.getToken() == null)
+        if(manager.getToken() == null) {
             getAuthToken();
-        //Add if(manager.isLogged())
+        }
         SearchFragment fragment = new SearchFragment();
         getFragmentManager().beginTransaction().replace(R.id.tweets_container, fragment).commit();
 
-        //getUserTimeline("AlxT116");
     }
 
     public void getAuthToken(){
