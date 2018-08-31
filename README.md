@@ -1,7 +1,7 @@
 # TenTweets
 Pulls top 10 favorited of recent tweets and replies by a user.
 
-![TenTweets Search](https://i.imgur.com/qd2rfZ4.png)
+<img src="https://i.imgur.com/qd2rfZ4.png" width="288" height="512" />
 
 ## Requirements
 "apikey.properties" needs to be updated with your Twitter API key and secret.
