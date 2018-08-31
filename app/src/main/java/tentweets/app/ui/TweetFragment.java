@@ -146,8 +146,10 @@ public class TweetFragment extends Fragment {
                 }
                 Log.d("TimelineFailure1","Status: "+statusCode+" Response: "+responseError.toString());
                 try{
-                    JSONObject error = responseError.getJSONObject("errors");
+                    JSONArray errors = responseError.getJSONArray("errors");
+                    JSONObject error = errors.getJSONObject(0);
                     String message = error.getString("message");
+                    Log.d(TAG, message);
                     Toast.makeText(getActivity(),message, Toast.LENGTH_LONG).show();
                 } catch(JSONException e){
                     e.printStackTrace();

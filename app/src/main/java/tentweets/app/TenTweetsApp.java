@@ -17,8 +17,8 @@ import tentweets.app.util.SessionManager;
 
 public class TenTweetsApp extends AppCompatActivity {
 
-    public final static String TAG = "Response";
-    private String TWEET_FRAGMENT = "tweet_fragment";
+    private final static String TAG = "TenTweetsApp";
+
     private SessionManager manager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
