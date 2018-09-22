@@ -17,8 +17,8 @@ import tentweets.app.util.SessionManager;
 
 public class TenTweetsApp extends AppCompatActivity {
 
-    public final static String TAG = "Response";
-    private String TWEET_FRAGMENT = "tweet_fragment";
+    private final static String TAG = "TenTweetsApp";
+
     private SessionManager manager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +27,12 @@ public class TenTweetsApp extends AppCompatActivity {
 
         manager = new SessionManager(this.getApplicationContext());
 
-        if(manager.getToken() == null)
+        if(manager.getToken() == null) {
             getAuthToken();
-        //Add if(manager.isLogged())
+        }
         SearchFragment fragment = new SearchFragment();
         getFragmentManager().beginTransaction().replace(R.id.tweets_container, fragment).commit();
 
-        //getUserTimeline("AlxT116");
     }
 
     public void getAuthToken(){

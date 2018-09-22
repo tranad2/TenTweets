@@ -116,23 +116,12 @@ public class TweetFragment extends Fragment {
                 try{
                     // Pull out events on the public timeline
                     ArrayList<JSONObject> arr = new ArrayList<>();
-                    //Log.d(TAG, "Timeline Length: "+response.length());
+
                     for(int i = 0; i < response.length(); i++){
                         JSONObject tweet = response.getJSONObject(i);
                         arr.add(tweet);
                     }
-                    Collections.sort(arr, new Comparator<JSONObject>() {        // Sort in descending order of favorite_count
-
-                        @Override
-                        public int compare(JSONObject lhs, JSONObject rhs) {
-                            try {
-                                return ((rhs.getInt("favorite_count") - (lhs.getInt("favorite_count"))));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                return 0;
-                            }
-                        }
-                    });
+                    sortListDescending(arr);
 
                     for(int i = 0; i < 10; i++){
                         JSONObject obj = arr.get(i);
@@ -157,8 +146,10 @@ public class TweetFragment extends Fragment {
                 }
                 Log.d("TimelineFailure1","Status: "+statusCode+" Response: "+responseError.toString());
                 try{
-                    JSONObject error = responseError.getJSONObject("errors");
+                    JSONArray errors = responseError.getJSONArray("errors");
+                    JSONObject error = errors.getJSONObject(0);
                     String message = error.getString("message");
+                    Log.d(TAG, message);
                     Toast.makeText(getActivity(),message, Toast.LENGTH_LONG).show();
                 } catch(JSONException e){
                     e.printStackTrace();
@@ -170,6 +161,21 @@ public class TweetFragment extends Fragment {
                 throwable.printStackTrace();
                 Log.d("TimelineFailure2","Status: "+statusCode+" Response: "+responseError.toString());
                 Toast.makeText(getActivity(),responseError, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void sortListDescending(ArrayList<JSONObject> arr){
+        Collections.sort(arr, new Comparator<JSONObject>() {        // Sort in descending order of favorite_count
+
+            @Override
+            public int compare(JSONObject lhs, JSONObject rhs) {
+                try {
+                    return ((rhs.getInt("favorite_count") - (lhs.getInt("favorite_count"))));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return 0;
+                }
             }
         });
     }
