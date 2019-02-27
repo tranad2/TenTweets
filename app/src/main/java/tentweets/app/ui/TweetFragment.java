@@ -49,8 +49,6 @@ public class TweetFragment extends Fragment {
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
      *
      * @param screen_name Twitter Username
      * @return A new instance of fragment TweetFragment.
