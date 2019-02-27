@@ -21,6 +21,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,6 +78,8 @@ public class TweetFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_tweet, container, false);
         getUserTimeline(name);
 
+
+
         tweetRecView = (RecyclerView) view.findViewById(R.id.recycler_tweet_view);
 
         // specify an adapter (see also next example)
@@ -84,8 +87,15 @@ public class TweetFragment extends Fragment {
         tweetRecView.setAdapter(tweetsAdapter);
         tweetRecView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
+
+
         // use a linear layout manager
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(tweetRecView.getContext(),
+                mLayoutManager.getOrientation());
+        tweetRecView.addItemDecoration(dividerItemDecoration);
+
         tweetRecView.setLayoutManager(mLayoutManager);
 
         return view;
@@ -191,10 +201,11 @@ public class TweetFragment extends Fragment {
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView tweetCreatedView, tweetTextView, tweetFavoritesView;
+            TextView tweetCreatedView, tweetTextView, tweetFavoritesView, tweetRankView;
 
             MyViewHolder(View view) {
                 super(view);
+                tweetRankView = (TextView) view.findViewById(R.id.tweet_rank);
                 tweetFavoritesView = (TextView) view.findViewById(R.id.tweet_favorites);
                 tweetCreatedView = (TextView) view.findViewById(R.id.tweet_created);
                 tweetTextView = (TextView) view.findViewById(R.id.tweet_text);
@@ -213,8 +224,10 @@ public class TweetFragment extends Fragment {
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
             final UserDetails tweet = tweets_list.get(position);
+            int rank = position + 1;
             Log.d(TAG,"Size: "+tweets_list.size());
 
+            holder.tweetRankView.setText(""+rank);
             holder.tweetFavoritesView.setText("Favorites: "+tweet.getFavoriteCount());
             holder.tweetCreatedView.setText("Date: "+tweet.getCreatedAt());
             holder.tweetTextView.setText("Message: \n"+tweet.getText());
